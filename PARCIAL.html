@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            background-color: goldenrod;
+        }
+        
+        th {
+            border-style: solid;
+        }
+        td { 
+            padding: 10px;
+            border-style: solid;
+        }
+        table { 
+            border-spacing: 10px;
+            border-collapse: separate;
+            border-style: solid;
+        }
+
+
+
+        #todo{
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                width: 100vw;
+                height: 120vh;
+        }
+
+        #visualizador{
+            background-color: antiquewhite;
+            
+            
+            
+        }
+
+        #formulario{
+            background-color: cornflowerblue;
+        
+        
+        }
+
+        #botonesForm{
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            
+        }
+
+        #divAgregar{
+            display: flex;
+            justify-content: center;
+        }
+    
+
+    </style>
+
+</head>
+<body>
+    
+    
+    <div id = "todo" style = "flex-grow: 1;">
+        <div id = "visualizador" style = "flex-grow: 1;">
+            <!-- Combobox filtro de arriba: --> 
+            Filtrar por: 
+            <select name="cmbPersonas" id="cmbPersonas" onInput='actualizarTabla()'>
+                <option value="todos">Todos</option>
+                <option value="alumnos">Alumnos</option>
+                <option value="docentes">Docentes</option>
+            </select>
+                <br>
+                Calcular Promedio ID:
+                <input type = "TEXT" name = "textoPromedio" id = "txtIdPromedio">
+                <input type = "BUTTON" name = "botonCalcular" id ="btnCalcular" value = "Calcular">
+                <br>
+                <!-- Aca se muestran los checkboxes generados: --> 
+            <div id = "checkboxes"></div>
+            <!-- Aca se muestra la tabla generada: --> 
+            <table id = "tabla"></table>
+            <div id = "divAgregar">
+                <input type = "BUTTON" id = "btnAgregarPrincipal" value = "AGREGAR">
+            </div>
+        </div>
+    <!-- Formulario alta modificacion: --> 
+    <div id = "formulario" style = "flex-grow: 1;">
+        <h1>Form Modificacion/Eliminacion</h1>
+        <label>Id:</label>
+        <br>
+        <input type = "TEXT" id = "txtId" readonly = "true">
+        <br>
+        <label>DNI:</label>
+        <br>
+        <input type = "TEXT" id = "txtDni">
+        <br>
+        <label>Apellido:</label>
+        <br>
+        <input type = "TEXT" id = "txtApellido">
+        <br>
+        <label>Nombre:</label>
+        <br>
+        <input type = "TEXT" id = "txtNombre">
+        <br>
+        Tipo:
+        <br>
+        <select name="cmbTipo" id="cmbTipo" onInput='actualizarLabels()'>
+            <option value="Alumno">Alumno</option>
+            <option value="Docente">Docente</option>
+        </select>
+        <br>
+        <label id = "labelMisc1">CursoLetra:</label>
+        <br>
+        <input type = "TEXT" id = "txtMisc1">
+        <br>
+        <label id = "labelMisc2">CursoNumero:</label>
+        <br>
+        <input type = "TEXT" id = "txtMisc2">
+        <!-- Botones al pie del formulario alta modificacion: --> 
+        <div id = "botonesForm" style="flex-grow: 1;">
+            <input type = "BUTTON" id ="btnAgregar" value = "Agregar">
+            <input type = "BUTTON" id ="btnModificar" value = "Modificar">
+            <input type = "BUTTON" id ="btnEliminar" value = "Eliminar">
+            <input type = "BUTTON" id ="btnCancelar" value = "Cancelar">
+        </div>
+
+    </div>
+</div>
+</body>
+
+<script>
+    //OOP
+    class Persona{
+        constructor(id, dni, apellido, nombre){
+            this.id = parseInt(id);
+            this.dni = dni;
+            this.apellido = apellido;
+            this.nombre = nombre;
+        }
+
+        static buscarPersonaPorId(arrayPersonas, id){   
+            for (let x = 0; x < arrayPersonas.length; x++){
+                if (arrayPersonas[x].id == id){
+                    return arrayPersonas[x];
+                }
+            }
+            return null;
+        }
+
+
+        static removePersonaById(arrayPersonas, id){
+            for (let x = 0; x < arrayPersonas.length; x++){
+                if (arrayPersonas[x].id == id){
+                    arrayPersonas.splice(x, 1);
+                    return true;
+                }
+            }
+            return false;
+
+        } 
+
+        static validarNombre(nombre){
+            
+            if (/\d/.test(nombre)){
+                return false;
+            }
+            return true;
+        }
+
+        
+
+        static validarEdad(edad){
+            if (edad >= 18 && edad < 99){
+                return true;
+            }
+            return false;
+        }
+
+        static validarSueldo(sueldo){
+            if (!isNaN(sueldo) && sueldo >= 10000 && sueldo <= 200000){
+                return true;
+            }
+            return false;
+        }
+
+        static validarDni(dni){
+            if (!isNaN(dni) && dni >= 10000000 && dni <= 100000000){
+                return true;
+            }
+            return false;
+        }
+
+        static validarId(id){
+            if (buscarPersonaPorId(arrayPersonas, id) == null){
+                return true;
+            } 
+                return false;
+            
+        }
+
+        static validarCursoLetra(cursoLetra) {
+            if (/\d/.test(nombre)){
+                return false;
+            }
+            return true;
+        }
+
+        
+
+        static validarCursoNum(num){
+            if (!isNaN(num) && num >= 1){
+                return true;
+            }
+            return false;
+        }
+
+        static validarAño(num){
+            if (!isNaN(num) && num >= 1 && num <= 10){
+                return true;
+            }
+            return false;
+        }
+
+    
+        
+
+        static generarId(){
+            if (arrayPersonas.length > 0){
+                var arrayOrdenado = arrayPersonas.sort(ordenarDescendente("id"));
+                var mayor = arrayOrdenado[0];
+                var idMayor = mayor.id;
+                return idMayor + 1;
+            } else {
+                return 1;
+            }
+        }
+               
+    }
+
+    class Alumno extends Persona{
+        constructor(id, dni, apellido, nombre, cursoLetra, cursoNumero){
+            super(id, dni, apellido, nombre);
+            this.cursoletra = cursoLetra;
+            this.cursonumero = cursoNumero;
+        }
+    }
+
+    class Docente extends Persona{
+        constructor(id, dni, apellido, nombre, materia, año){
+            super(id, dni, apellido, nombre);
+            this.materia = materia;
+            this.año = parseFloat(año);
+        }
+    }
+
+    function TraducirJson(strJson){
+        return JSON.parse(strJson);
+    }
+
+    function generarArrayPersonas(arrayJson){
+            return arrayJson.map((elemento, indice, vector)=>{
+                return discriminarYGenerarPersona(elemento);
+            }
+        );
+        
+    }
+
+    function discriminarYGenerarPersona(obj){
+        if (obj.hasOwnProperty("cursoNumero")){
+                return new Alumno(
+                obj["id"],
+                obj["dni"],
+                obj["apellido"],
+                obj["nombre"],
+                obj["cursoLetra"],
+                obj["cursoNumero"]);
+
+            } else {
+                return new Docente(
+                obj["id"],
+                obj["dni"],
+                obj["apellido"],
+                obj["nombre"],
+                obj["materia"],
+                obj["año"]);
+            }
+    }
+
+    ////
+
+    ////INSTRUCCIONES
+    
+    let strJson = '[{"id":1,"dni":17663295,"nombre":"FABIAN MARCELO","apellido":"ABADIE","cursoNumero":1,"cursoLetra":"F"},{"id":2,"dni":38724762,"nombre":"MAIRA DAIANA","apellido":"ABALOS","cursoNumero":3,"cursoLetra":"M"},{"id":3,"dni":25447357,"nombre":"NOELIA LIDIA","apellido":"ABBA","cursoNumero":2,"cursoLetra":"N"},{"id":4,"dni":27577699,"nombre":"MARÍA SOLEDAD","apellido":"ACHOR","cursoNumero":2,"cursoLetra":"M"},{"id":900,"dni":11496581,"nombre":"JOSE MIGUEL","apellido":"ARMALEO","materia":"Fisica","año":1},{"id":899,"dni":35326658,"nombre":"ROSA DEL VALLE","apellido":"LOPEZ","materia":"Lengua","año":3},{"id":898,"dni":39638351,"nombre":"DANIELA BELEN","apellido":"BROGGI D`ATENA","materia":"Matematica","año":3},{"id":897,"dni":17275566,"nombre":"PABLO ALBERTO","apellido":"ALMEIDA","materia":"Quimica","año":1}]';
+    let arrayObj = TraducirJson(strJson);
+    var arrayPersonas = generarArrayPersonas(arrayObj);
+    var botonPresionado = {"id":false, "dni":false, "apellido":false, "nombre":false, "cursonumero":false, "cursoletra":false, "materia":false, "año":false};//este array asociativo graba el biestado de los botones
+    
+    //EVENT LISTENERS DE LOS BOTONES
+    document.getElementById("btnCalcular").addEventListener("click", ()=> {calcularPromedioID()});
+    document.getElementById("btnAgregarPrincipal").addEventListener("click", ()=>{visualizarFormularioVacio()});
+    document.getElementById("btnAgregarPrincipal").addEventListener("click", ()=>{activarComboBoxTipo()});
+    document.getElementById("btnAgregar").addEventListener("click", ()=>{agregarPersona()});
+    document.getElementById("btnModificar").addEventListener("click", ()=>{modificarPersona()});
+    document.getElementById("btnEliminar").addEventListener("click", ()=>{(removerPersona())});
+    document.getElementById("btnCancelar").addEventListener("click", ()=>{ocultarFormulario()});
+    
+    
+    
+    document.getElementById("formulario").style.visibility = "hidden";
+
+
+    generarFilaCheckboxes();
+    generarTablaHtml();
+
+    ////
+
+    ////FUNCIONES
+
+    function calcularPromedioID(){
+        let promedio = 0;
+        let tipo;
+        if (arrayPersonas.length> 0){
+            switch (document.getElementById("cmbPersonas").value){
+            case "todos":
+                tipo = Persona;
+                break;
+            case "Alumnos":
+                tipo = Alumno;
+                break;
+            case "Docentes":
+                tipo = Docente;
+                break;
+            }
+            
+        }
+        arrayPersonasFiltrado = arrayPersonas.filter((o)=> o instanceof tipo);
+        if (arrayPersonasFiltrado.length > 0){
+            promedio = arrayPersonasFiltrado.reduce((suma,actual) => suma + actual.id, 0)/arrayPersonasFiltrado.length;
+        }
+        document.getElementById("txtIdPromedio").value = promedio;
+    }
+
+    //funciones de activar o desactivar combobox tipo
+
+    function desactivarComboBoxTipo(){
+        document.getElementById("cmbTipo").disabled = true;
+    }
+
+    function activarComboBoxTipo(){
+        document.getElementById("cmbTipo").disabled = false;
+    }
+
+    //
+
+    //funciones de la fila de checkboxes
+
+    function generarFilaCheckboxes(){
+        filaCheckboxes = document.getElementById("checkboxes");
+        filaCheckboxes.appendChild(generarCheckBox("id", "ID"));
+        filaCheckboxes.appendChild(generarCheckBox("dni", "DNI"));
+        filaCheckboxes.appendChild(generarCheckBox("apellido", "APELLIDO"));
+        filaCheckboxes.appendChild(generarCheckBox("nombre", "NOMBRE"));
+        filaCheckboxes.appendChild(generarCheckBox("cursonumero", "CURSO NUMERO"));
+        filaCheckboxes.appendChild(generarCheckBox("cursoletra", "CURSO LETRA"));
+        filaCheckboxes.appendChild(generarCheckBox("materia", "MATERIA"));
+        filaCheckboxes.appendChild(generarCheckBox("año", "AÑO"));
+        
+    }
+    
+    function generarCheckBox(atributo, texto){
+        let checkbox = document.createElement("input");
+        let labelCheckbox = document.createElement("label");
+        labelCheckbox.innerHTML = texto;
+        checkbox.setAttribute("type", "checkbox");
+        checkbox.id = atributo;
+        checkbox.setAttribute("checked", true);
+        checkbox.setAttribute("onclick", "actualizarTabla()");
+        let spanCheckBox = document.createElement("span");
+        spanCheckBox.appendChild(checkbox);
+        spanCheckBox.innerHTML += texto;
+        return spanCheckBox;
+    }
+
+    
+    //funciones de la tabla
+
+
+    function generarFilaEncabezado(){
+        tabla = document.getElementById("tabla");
+        filaEncabezado = document.createElement("thead");
+        filaEncabezado.setAttribute("id", "cabezaTabla");
+        //es mejor pasarle la fila aunque siempre sea la misma, que tener que buscarla siempre cada vez que llamo a la funcion de generar celda?
+        generarCeldaEncabezado(filaEncabezado, "id", "ID");
+        generarCeldaEncabezado(filaEncabezado, "dni", "DNI");
+        generarCeldaEncabezado(filaEncabezado, "apellido", "APELLIDO");
+        generarCeldaEncabezado(filaEncabezado, "nombre", "NOMBRE");
+        generarCeldaEncabezado(filaEncabezado, "cursonumero", "CURSO NUMERO");
+        generarCeldaEncabezado(filaEncabezado, "cursoletra", "CURSO LETRA");
+        generarCeldaEncabezado(filaEncabezado, "materia", "MATERIA");
+        generarCeldaEncabezado(filaEncabezado, "año", "AÑO");
+        tabla.appendChild(filaEncabezado);
+        
+    }
+
+    function generarCeldaEncabezado(filaEncabezado, etiqueta, texto){
+        if (document.getElementById(etiqueta).checked == true){
+            let encabezadoNuevo = document.createElement("th");
+            let boton = document.createElement("button");
+            boton.appendChild(document.createTextNode(texto));
+            boton.addEventListener("click", ()=>{ordernarTabla(etiqueta)});
+            encabezadoNuevo.appendChild(boton);
+            filaEncabezado.appendChild(encabezadoNuevo);
+        }
+
+    }
+
+
+    function actualizarTabla(){
+        let tabla = document.getElementById("tabla");
+        tabla.removeChild(document.getElementById("cuerpo"));
+        tabla.removeChild(document.getElementById("cabezaTabla"));
+        generarTablaHtml();
+    }
+
+    function generarTablaHtml(){
+        generarFilaEncabezado();
+        let tabla = document.getElementById("tabla");
+        let cuerpoTabla = document.createElement("tbody");
+        cuerpoTabla.setAttribute("id", "cuerpo");
+        let encabezadoTabla = document.createElement("thead");
+
+        tabla.appendChild(cuerpoTabla);
+        tabla.appendChild(encabezadoTabla);
+   
+        arrayPersonas.forEach(element => {
+            let fila = document.createElement("tr");
+            let filtro = document.getElementById("cmbPersonas").value;
+
+            
+            if (element instanceof Docente){
+                if (filtro == "todos" || filtro == "docentes"){
+                    generarCelda(fila, element.id, "id");
+                    generarCelda(fila, element.dni, "dni");
+                    generarCelda(fila, element.apellido, "apellido");
+                    generarCelda(fila, element.nombre, "nombre");
+                    generarCelda(fila, "N/A", "cursonumero");
+                    generarCelda(fila, "N/A", "cursoletra");  
+                    generarCelda(fila, element.materia, "materia");
+                    generarCelda(fila, element.año, "año");
+                }
+            } else {
+                if (filtro == "todos" || filtro == "alumnos"){
+                    generarCelda(fila, element.id, "id");
+                    generarCelda(fila, element.dni, "dni");
+                    generarCelda(fila, element.apellido, "apellido");
+                    generarCelda(fila, element.nombre, "nombre");
+                    generarCelda(fila, element.cursonumero, "cursonumero");
+                    generarCelda(fila, element.cursoletra, "cursoletra");              
+                    generarCelda(fila, "N/A", "materia");
+                    generarCelda(fila, "N/A", "año");
+                }
+                
+            }
+            fila.setAttribute("id", element.id);
+            fila.addEventListener("dblclick", ()=>{visualizarFormulario(fila)});
+            fila.addEventListener("dblclick", ()=>{desactivarComboBoxTipo()});
+            document.getElementById("cuerpo").appendChild(fila);
+            
+        });
+
+    }
+
+    function generarCelda(fila, valor, tag){
+        if (document.getElementById(tag).checked == true){
+            let celda = document.createElement("td");
+            let valorCelda = valor;
+            celda.appendChild(document.createTextNode(valor)); 
+            fila.appendChild(celda);
+        }
+            
+        
+    }
+
+
+    function ordernarTabla(atributo){
+        if (!botonPresionado[atributo]) {
+            arrayPersonas.sort(ordenarAscendente(atributo));
+            botonPresionado[atributo] = true;
+        } else {
+            arrayPersonas.sort(ordenarDescendente(atributo));
+            botonPresionado[atributo] = false;
+        }
+        
+        actualizarTabla();
+        
+    }
+    
+    //utilizar un delegado propio que devuelve a su vez una funcion anonima compatible con la funcion sort() me permite agregar un parametro mas
+    //en este caso el atributo que quiero ordenar, que de otra forma no podria ya que esta funcion admite solo dos parametros
+    const ordenarAscendente = (atributo) =>
+    (a, b) => a[atributo] == null && b[atributo] == null || a[atributo] == b[atributo] ? 0 : a[atributo] < b[atributo] || b[atributo] == null ? -1 : 1;
+
+    const ordenarDescendente = (atributo) =>
+    (a, b) => a[atributo] == null && b[atributo] == null || a[atributo] == b[atributo] ? 0 : a[atributo] > b[atributo] || b[atributo] == null ? -1 : 1;
+
+
+    
+
+    function ocultarFormulario(){
+        document.getElementById("formulario").style.visibility = "hidden";
+        document.getElementById("btnAgregarPrincipal").disabled = false;
+        document.getElementById("txtId").value = "";
+        document.getElementById("txtDni").value = "";
+        document.getElementById("txtApellido").value = "";
+        document.getElementById("txtNombre").value = "";
+        document.getElementById("txtMisc1").value = "";
+        document.getElementById("txtMisc2").value = "";
+
+    }
+
+    function visualizarFormularioVacio(){
+        divFormulario = document.getElementById("formulario");
+        divFormulario.style.visibility = "visible";
+        document.getElementById("btnAgregar").disabled = false;
+        document.getElementById("btnModificar").disabled = true;
+        document.getElementById("btnEliminar").disabled = true;
+    }
+
+    function visualizarFormulario(fila){
+        var divFormulario = document.getElementById("formulario");
+        divFormulario.style.visibility = "visible";
+        document.getElementById("btnAgregarPrincipal").disabled = true;
+        document.getElementById("btnAgregar").disabled = true;
+        document.getElementById("btnModificar").disabled = false;
+        document.getElementById("btnEliminar").disabled = false;
+        
+
+        
+        
+        persona = Persona.buscarPersonaPorId(arrayPersonas, fila.id);
+
+        txtId = document.getElementById("txtId");
+        txtId.value = persona.id;
+        txtDni = document.getElementById("txtDni");
+        txtDni.value = persona.dni;
+        txtApellido = document.getElementById("txtApellido");
+        txtApellido.value = persona.apellido;
+        txtNombre = document.getElementById("txtNombre");
+        txtNombre.value = persona.nombre;
+
+        cmbTipo = document.getElementById("cmbTipo");
+    
+
+        labelMisc1 = document.getElementById("labelMisc1");
+        txtMisc1 = document.getElementById("txtMisc1");
+        labelMisc2 = document.getElementById("labelMisc2");
+        txtMisc2 = document.getElementById("txtMisc2");
+        if (persona instanceof Alumno){
+            cmbTipo.selectedIndex = 0;
+            labelMisc1.innerHTML = "Curso Letra:";
+            txtMisc1.value = persona.cursoletra;
+            labelMisc2.innerHTML = "Curso Numero:";
+            txtMisc2.value = persona.cursonumero;
+
+        } else {
+            cmbTipo.selectedIndex = 1;
+            labelMisc1.innerHTML = "Materia:";
+            txtMisc1.value = persona.materia;
+            labelMisc2.innerHTML = "Año:";
+            txtMisc2.value = persona.año;
+        }
+
+       
+    }
+
+     //actualiza el texto de los dos labels que dependen del tipo de la persona
+     function actualizarLabels(){
+        if (document.getElementById("cmbTipo").selectedIndex == 0){
+            document.getElementById("labelMisc1").innerHTML = "Curso Letra:";
+            document.getElementById("labelMisc2").innerHTML = "Curso Numero:";
+        } else {
+            document.getElementById("labelMisc1").innerHTML = "Materia:";
+            document.getElementById("labelMisc2").innerHTML = "Año:";
+        }
+    }
+  
+
+    function agregarPersona(){
+        let dni = document.getElementById("txtDni").value;
+        let apellido = document.getElementById("txtApellido").value;
+        let nombre = document.getElementById("txtNombre").value;
+        let misc1;
+        let misc2;
+        let nuevoId = Persona.generarId();
+
+        if (!Persona.validarDni(dni) || !Persona.validarNombre(apellido) || !Persona.validarNombre(nombre)){
+            alert("Datos incorrectos");
+            return;
+        } 
+        switch(document.getElementById("cmbTipo").selectedIndex){
+            case 0:
+                misc1 = document.getElementById("txtMisc1").value;//Curso Letra
+                misc2 = document.getElementById("txtMisc2").value;//Curso Numero
+                if (!Persona.validarCursoLetra(misc1) || !Persona.validarCursoNum(misc2)){
+                    alert("Datos incorrectos");
+                    return;
+                }
+                arrayPersonas.push(new Alumno(nuevoId, dni, apellido, nombre, misc1, misc2));
+                break;
+            case 1:
+                misc1 = document.getElementById("txtMisc1").value;//Materia
+                misc2 = document.getElementById("txtMisc2").value;//Año
+                if (!Persona.validarAño(misc2)){
+                    alert("Datos incorrectos");
+                return; 
+                }
+                arrayPersonas.push(new Docente(nuevoId, dni, apellido, nombre, misc1, misc2));
+                break;
+        }
+        actualizarTabla();
+        alert("Usuario agregado con éxito con id: " + nuevoId);
+    } 
+
+   
+    
+    function modificarPersona(){
+        var personaAModificar = Persona.buscarPersonaPorId(arrayPersonas, document.getElementById("txtId").value);
+        var dni = document.getElementById("txtDni").value;
+        var apellido = document.getElementById("txtApellido").value;
+        var nombre = document.getElementById("txtNombre").value;
+        var misc1 = document.getElementById("txtMisc1").value;
+        var misc2 = document.getElementById("txtMisc2").value;
+        
+
+        if (personaAModificar != null && Persona.validarNombre(apellido) && Persona.validarNombre(nombre)){
+            switch(document.getElementById("cmbTipo").selectedIndex){
+                case 0://es Alumno
+                    if (Persona.validarCursoLetra(misc1) && Persona.validarCursoNum(misc2)){
+                        personaAModificar.dni = dni;
+                        personaAModificar.nombre = nombre;
+                        personaAModificar.apellido = apellido;
+                        personaAModificar.cursoletra = misc1;
+                        personaAModificar.cursonumero = misc2;
+                        actualizarTabla();
+                        alert("Alumno modificado");
+                        ocultarFormulario();
+                        return 1;
+                    } 
+                    break;
+                case 1://es Docente
+                    if (Persona.validarAño(misc2)){
+                        personaAModificar.dni = dni;
+                        personaAModificar.nombre = nombre;
+                        personaAModificar.apellido = apellido;
+                        personaAModificar.materia = misc1;
+                        personaAModificar.año = misc2;
+                        actualizarTabla();
+                        alert("Docente modificado");
+                        ocultarFormulario();
+                        return 1;
+                    }
+                    break;
+            }
+        }
+        alert("Datos inválidos");
+        return 0;
+    }
+
+     //remueve persona de la lista y actualiza la tabla
+     function removerPersona(){
+        if (Persona.removePersonaById(arrayPersonas, document.getElementById("txtId").value)){
+            alert("Persona eliminada");
+            ocultarFormulario();
+        } else {
+            alert("No se pudo eliminar");
+        }
+        actualizarTabla();
+    }
+
+
+   
+
+
+  
+
+
+</script>
+</html>
