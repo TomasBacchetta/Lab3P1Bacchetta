@@ -167,15 +167,15 @@
         //para los strings me fijo solo que no tengan numeros
         static validarNombre(nombre){
             
-            if (/\d/.test(nombre)){
+            if (/\d/.test(nombre) || nombre == null || nombre.length == 0){
                 return false;
             }
             return true;
         }
 
-        static validarMateria(nombre){
+        static validarMateria(materia){
             
-            if (/\d/.test(nombre)){
+            if (/\d/.test(materia) || materia == null || materia.length == 0){
                 return false;
             }
             return true;
@@ -199,7 +199,7 @@
         }
 
         static validarCursoLetra(cursoLetra) {
-            if (/\d/.test(nombre)){
+            if (/\d/.test(cursoLetra) || cursoLetra == null || cursoLetra.length == 0){
                 return false;
             }
             return true;
@@ -444,7 +444,6 @@
             let fila = document.createElement("tr");
             let filtro = document.getElementById("cmbPersonas").value;
 
-            
             if (element instanceof Docente){
                 if (filtro == "todos" || filtro == "docentes"){
                     generarCelda(fila, element.id, "id");
@@ -477,7 +476,7 @@
         });
 
     }
-
+    //el tag es el nombre de la key
     function generarCelda(fila, valor, tag){
         if (document.getElementById(tag).checked == true){
             let celda = document.createElement("td");
