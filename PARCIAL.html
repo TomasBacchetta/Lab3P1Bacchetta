@@ -341,6 +341,12 @@
     }
 
     //funciones de activar o desactivar combobox tipo
+    //se desactiva cuando se modifica a una persona
+    //considero que no cuenta como modificacion el cambio de tipo
+    //sino que tecnicamente estaria borrando a la persona y generando una nueva
+    //por lo que para eso reservo esa tarea al boton eliminar
+    //tambien son desactivados algunos botones a lo largo del codigo
+    //dependiendo de como se abra el formulario
 
     function desactivarComboBoxTipo(){
         document.getElementById("cmbTipo").disabled = true;
