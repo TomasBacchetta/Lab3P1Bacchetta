@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- Bacchetta, Tomás. Primer Parcial de Laboratorio III --> 
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -163,8 +164,16 @@
             return false;
 
         } 
-
+        //para los strings me fijo solo que no tengan numeros
         static validarNombre(nombre){
+            
+            if (/\d/.test(nombre)){
+                return false;
+            }
+            return true;
+        }
+
+        static validarMateria(nombre){
             
             if (/\d/.test(nombre)){
                 return false;
@@ -295,8 +304,8 @@
 
     ////INSTRUCCIONES
     
-    let strJson = '[{"id":1,"dni":17663295,"nombre":"FABIAN MARCELO","apellido":"ABADIE","cursoNumero":1,"cursoLetra":"F"},{"id":2,"dni":38724762,"nombre":"MAIRA DAIANA","apellido":"ABALOS","cursoNumero":3,"cursoLetra":"M"},{"id":3,"dni":25447357,"nombre":"NOELIA LIDIA","apellido":"ABBA","cursoNumero":2,"cursoLetra":"N"},{"id":4,"dni":27577699,"nombre":"MARÍA SOLEDAD","apellido":"ACHOR","cursoNumero":2,"cursoLetra":"M"},{"id":900,"dni":11496581,"nombre":"JOSE MIGUEL","apellido":"ARMALEO","materia":"Fisica","año":1},{"id":899,"dni":35326658,"nombre":"ROSA DEL VALLE","apellido":"LOPEZ","materia":"Lengua","año":3},{"id":898,"dni":39638351,"nombre":"DANIELA BELEN","apellido":"BROGGI D`ATENA","materia":"Matematica","año":3},{"id":897,"dni":17275566,"nombre":"PABLO ALBERTO","apellido":"ALMEIDA","materia":"Quimica","año":1}]';
-    let arrayObj = TraducirJson(strJson);
+    var strJson = '[{"id":1,"dni":17663295,"nombre":"FABIAN MARCELO","apellido":"ABADIE","cursoNumero":1,"cursoLetra":"F"},{"id":2,"dni":38724762,"nombre":"MAIRA DAIANA","apellido":"ABALOS","cursoNumero":3,"cursoLetra":"M"},{"id":3,"dni":25447357,"nombre":"NOELIA LIDIA","apellido":"ABBA","cursoNumero":2,"cursoLetra":"N"},{"id":4,"dni":27577699,"nombre":"MARÍA SOLEDAD","apellido":"ACHOR","cursoNumero":2,"cursoLetra":"M"},{"id":900,"dni":11496581,"nombre":"JOSE MIGUEL","apellido":"ARMALEO","materia":"Fisica","año":1},{"id":899,"dni":35326658,"nombre":"ROSA DEL VALLE","apellido":"LOPEZ","materia":"Lengua","año":3},{"id":898,"dni":39638351,"nombre":"DANIELA BELEN","apellido":"BROGGI D`ATENA","materia":"Matematica","año":3},{"id":897,"dni":17275566,"nombre":"PABLO ALBERTO","apellido":"ALMEIDA","materia":"Quimica","año":1}]';
+    var arrayObj = TraducirJson(strJson);
     var arrayPersonas = generarArrayPersonas(arrayObj);
     var botonPresionado = {"id":false, "dni":false, "apellido":false, "nombre":false, "cursonumero":false, "cursoletra":false, "materia":false, "año":false};//este array asociativo graba el biestado de los botones
     
@@ -329,10 +338,10 @@
             case "todos":
                 tipo = Persona;
                 break;
-            case "Alumnos":
+            case "alumnos":
                 tipo = Alumno;
                 break;
-            case "Docentes":
+            case "docentes":
                 tipo = Docente;
                 break;
             }
@@ -391,10 +400,12 @@
 
 
     function generarFilaEncabezado(){
-        tabla = document.getElementById("tabla");
+        let tabla = document.getElementById("tabla");
         filaEncabezado = document.createElement("thead");
         filaEncabezado.setAttribute("id", "cabezaTabla");
-        //es mejor pasarle la fila aunque siempre sea la misma, que tener que buscarla siempre cada vez que llamo a la funcion de generar celda?
+        
+        //podria pasar un solo atributo que sea en mayusculas y luego hacer tolower y eliminar espacios en blanco pero me parecio mas claro de leer asi
+        //tambien podria iterar las keys para una mayor reusabilidad
         generarCeldaEncabezado(filaEncabezado, "id", "ID");
         generarCeldaEncabezado(filaEncabezado, "dni", "DNI");
         generarCeldaEncabezado(filaEncabezado, "apellido", "APELLIDO");
@@ -544,22 +555,22 @@
         
         persona = Persona.buscarPersonaPorId(arrayPersonas, fila.id);
 
-        txtId = document.getElementById("txtId");
+        let txtId = document.getElementById("txtId");
         txtId.value = persona.id;
-        txtDni = document.getElementById("txtDni");
+        let txtDni = document.getElementById("txtDni");
         txtDni.value = persona.dni;
-        txtApellido = document.getElementById("txtApellido");
+        let txtApellido = document.getElementById("txtApellido");
         txtApellido.value = persona.apellido;
-        txtNombre = document.getElementById("txtNombre");
+        let txtNombre = document.getElementById("txtNombre");
         txtNombre.value = persona.nombre;
 
-        cmbTipo = document.getElementById("cmbTipo");
+        let cmbTipo = document.getElementById("cmbTipo");
     
 
-        labelMisc1 = document.getElementById("labelMisc1");
-        txtMisc1 = document.getElementById("txtMisc1");
-        labelMisc2 = document.getElementById("labelMisc2");
-        txtMisc2 = document.getElementById("txtMisc2");
+        let labelMisc1 = document.getElementById("labelMisc1");
+        let txtMisc1 = document.getElementById("txtMisc1");
+        let labelMisc2 = document.getElementById("labelMisc2");
+        let txtMisc2 = document.getElementById("txtMisc2");
         if (persona instanceof Alumno){
             cmbTipo.selectedIndex = 0;
             labelMisc1.innerHTML = "Curso Letra:";
@@ -594,6 +605,7 @@
         let dni = document.getElementById("txtDni").value;
         let apellido = document.getElementById("txtApellido").value;
         let nombre = document.getElementById("txtNombre").value;
+        //misc1 y misc2 corresponden a variables miscelaneas que toman valores diferentes dependiendo de la clase
         let misc1;
         let misc2;
         let nuevoId = Persona.generarId();
@@ -615,7 +627,7 @@
             case 1:
                 misc1 = document.getElementById("txtMisc1").value;//Materia
                 misc2 = document.getElementById("txtMisc2").value;//Año
-                if (!Persona.validarAño(misc2)){
+                if (!Persona.validarMateria(misc1) ||!Persona.validarAño(misc2)){
                     alert("Datos incorrectos");
                 return; 
                 }
@@ -629,12 +641,12 @@
    
     
     function modificarPersona(){
-        var personaAModificar = Persona.buscarPersonaPorId(arrayPersonas, document.getElementById("txtId").value);
-        var dni = document.getElementById("txtDni").value;
-        var apellido = document.getElementById("txtApellido").value;
-        var nombre = document.getElementById("txtNombre").value;
-        var misc1 = document.getElementById("txtMisc1").value;
-        var misc2 = document.getElementById("txtMisc2").value;
+        let personaAModificar = Persona.buscarPersonaPorId(arrayPersonas, document.getElementById("txtId").value);
+        let dni = document.getElementById("txtDni").value;
+        let apellido = document.getElementById("txtApellido").value;
+        let nombre = document.getElementById("txtNombre").value;
+        let misc1 = document.getElementById("txtMisc1").value;
+        let misc2 = document.getElementById("txtMisc2").value;
         
 
         if (personaAModificar != null && Persona.validarNombre(apellido) && Persona.validarNombre(nombre)){
