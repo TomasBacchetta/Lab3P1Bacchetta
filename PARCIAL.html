@@ -183,20 +183,6 @@
 
         
 
-        static validarEdad(edad){
-            if (edad >= 18 && edad < 99){
-                return true;
-            }
-            return false;
-        }
-
-        static validarSueldo(sueldo){
-            if (!isNaN(sueldo) && sueldo >= 10000 && sueldo <= 200000){
-                return true;
-            }
-            return false;
-        }
-
         static validarDni(dni){
             if (!isNaN(dni) && dni >= 10000000 && dni <= 100000000){
                 return true;
